@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-15
+
 ### Added
 
 - MikroTik routers on RouterOS 7 (REST API, over HTTPS or HTTP) and RouterOS
@@ -35,3 +37,6 @@ the notes of the version's GitHub Release.
 - "Test the connection" and "List the firewall rules" in the Configuration
   screen.
 - Texts and documentation in English, French, German and Spanish.
+
+[Unreleased]: https://github.com/guim31/gladys-mikrotik/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/guim31/gladys-mikrotik/releases/tag/v1.0.1
