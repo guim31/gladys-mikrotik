@@ -1,177 +1,898 @@
 {
   "manifest_version": 1,
   "type": "device",
-  "name": "Demo Devices Template",
+  "name": "MikroTik",
   "description": {
-    "en": "Starter template showing sensors, a switch, a dimmable light and a smart plug.",
-    "fr": "Template de démarrage : capteurs, interrupteur, lampe variable et prise connectée."
+    "en": "MikroTik routers: presence of your devices, router health, WAN rates and outages.",
+    "fr": "Routeurs MikroTik : présence de vos appareils, santé du routeur, débits et coupures WAN.",
+    "de": "MikroTik-Router: Anwesenheit deiner Geräte, Router-Zustand, WAN-Raten und Ausfälle.",
+    "es": "Routers MikroTik: presencia de sus dispositivos, estado del router, caudal y cortes WAN."
   },
   "version": "1.0.0",
-  "docker_image": "ghcr.io/gladysassistant/integration-template-js:1.0.0",
+  "docker_image": "ghcr.io/guim31/gladys-mikrotik:1.0.0",
   "gladys_version": ">=5.1.0",
-  "cover_image": "https://raw.githubusercontent.com/GladysAssistant/integration-template-js/master/cover.png",
-  "categories": ["lighting", "security", "environment"],
-  "transports": ["local", "cloud"],
+  "cover_image": "https://raw.githubusercontent.com/guim31/gladys-mikrotik/main/cover.png",
+  "categories": ["network"],
+  "transports": ["local"],
   "config_schema": [
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Getting started", "fr": "Pour commencer" },
+      "label": {
+        "en": "Your MikroTik router",
+        "fr": "Votre routeur MikroTik",
+        "de": "Dein MikroTik-Router",
+        "es": "Su router MikroTik"
+      },
       "description": {
-        "en": "The demo weather station reads real data from the free Open-Meteo API: pick the coordinates to observe. No account, no API key.",
-        "fr": "La station météo de démonstration lit de vraies données via l'API gratuite Open-Meteo : choisissez les coordonnées à observer. Pas de compte, pas de clé d'API."
+        "en": "RouterOS 7 (REST API) or RouterOS 6.43+ (API). Create a dedicated user: the read group is enough for presence and measures. The protocol is detected automatically.",
+        "fr": "RouterOS 7 (API REST) ou RouterOS 6.43+ (API). Créez un utilisateur dédié : le groupe read suffit pour la présence et les mesures. Le protocole est détecté automatiquement.",
+        "de": "RouterOS 7 (REST-API) oder RouterOS 6.43+ (API). Lege einen eigenen Benutzer an: Die Gruppe read reicht für Anwesenheit und Messwerte. Das Protokoll wird automatisch erkannt.",
+        "es": "RouterOS 7 (API REST) o RouterOS 6.43+ (API). Cree un usuario dedicado: el grupo read basta para la presencia y las medidas. El protocolo se detecta automáticamente."
       },
       "links": [
         {
-          "url": "https://open-meteo.com/en/docs",
-          "label": { "en": "Open-Meteo documentation", "fr": "Documentation Open-Meteo" }
+          "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/47579162/REST+API",
+          "label": {
+            "en": "RouterOS REST API",
+            "fr": "API REST de RouterOS",
+            "de": "REST-API von RouterOS",
+            "es": "API REST de RouterOS"
+          }
+        },
+        {
+          "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/47579160/API",
+          "label": {
+            "en": "RouterOS API",
+            "fr": "API de RouterOS",
+            "de": "API von RouterOS",
+            "es": "API de RouterOS"
+          }
         }
       ]
     },
     {
-      "key": "latitude",
-      "type": "number",
-      "label": { "en": "Latitude", "fr": "Latitude" },
-      "description": {
-        "en": "Latitude used for the demo weather sensor.",
-        "fr": "Latitude utilisée par le capteur météo de démonstration."
+      "key": "host",
+      "type": "string",
+      "label": {
+        "en": "Router address",
+        "fr": "Adresse du routeur",
+        "de": "Adresse des Routers",
+        "es": "Dirección del router"
       },
-      "placeholder": { "en": "e.g. 48.8566", "fr": "ex. 48.8566" },
+      "description": {
+        "en": "IP address or name of the router, with :port if the service does not use its default port.",
+        "fr": "Adresse IP ou nom du routeur, avec :port si le service n'utilise pas son port par défaut.",
+        "de": "IP-Adresse oder Name des Routers, mit :Port, falls der Dienst nicht seinen Standardport nutzt.",
+        "es": "Dirección IP o nombre del router, con :puerto si el servicio no usa su puerto predeterminado."
+      },
+      "placeholder": {
+        "en": "e.g. 192.168.88.1",
+        "fr": "ex. 192.168.88.1",
+        "de": "z. B. 192.168.88.1",
+        "es": "p. ej. 192.168.88.1"
+      },
       "required": true,
-      "default": 48.8566,
-      "min": -90,
-      "max": 90
+      "default": ""
     },
     {
-      "key": "longitude",
-      "type": "number",
-      "label": { "en": "Longitude", "fr": "Longitude" },
-      "description": {
-        "en": "Longitude used for the demo weather sensor.",
-        "fr": "Longitude utilisée par le capteur météo de démonstration."
+      "key": "username",
+      "type": "string",
+      "label": {
+        "en": "User name",
+        "fr": "Nom d'utilisateur",
+        "de": "Benutzername",
+        "es": "Nombre de usuario"
       },
-      "placeholder": { "en": "e.g. 2.3522", "fr": "ex. 2.3522" },
+      "description": {
+        "en": "A RouterOS user, ideally in the read group.",
+        "fr": "Un utilisateur RouterOS, idéalement du groupe read.",
+        "de": "Ein RouterOS-Benutzer, am besten in der Gruppe read.",
+        "es": "Un usuario de RouterOS, idealmente del grupo read."
+      },
+      "placeholder": {
+        "en": "e.g. gladys",
+        "fr": "ex. gladys",
+        "de": "z. B. gladys",
+        "es": "p. ej. gladys"
+      },
       "required": true,
-      "default": 2.3522,
-      "min": -180,
-      "max": 180
+      "default": ""
     },
     {
-      "key": "unit",
+      "key": "password",
+      "type": "secret",
+      "label": {
+        "en": "Password",
+        "fr": "Mot de passe",
+        "de": "Passwort",
+        "es": "Contraseña"
+      },
+      "required": false
+    },
+    {
+      "key": "protocol",
       "type": "select",
-      "label": { "en": "Temperature unit", "fr": "Unité de température" },
+      "label": {
+        "en": "Protocol",
+        "fr": "Protocole",
+        "de": "Protokoll",
+        "es": "Protocolo"
+      },
+      "description": {
+        "en": "Automatic tries REST over HTTPS, API-SSL, REST over HTTP, then API, and keeps the first that works.",
+        "fr": "Automatique essaie REST en HTTPS, API-SSL, REST en HTTP puis API, et garde le premier qui marche.",
+        "de": "Automatisch probiert REST über HTTPS, API-SSL, REST über HTTP, dann API, und behält das erste, das funktioniert.",
+        "es": "Automático prueba REST por HTTPS, API-SSL, REST por HTTP y luego API, y conserva el primero que funciona."
+      },
       "required": false,
-      "default": "celsius",
+      "default": "auto",
       "options": [
-        { "value": "celsius", "label": { "en": "Celsius", "fr": "Celsius" } },
-        { "value": "fahrenheit", "label": { "en": "Fahrenheit", "fr": "Fahrenheit" } }
+        {
+          "value": "auto",
+          "label": {
+            "en": "Automatic",
+            "fr": "Automatique",
+            "de": "Automatisch",
+            "es": "Automático"
+          }
+        },
+        {
+          "value": "rest_https",
+          "label": {
+            "en": "REST over HTTPS (RouterOS 7, port 443)",
+            "fr": "REST en HTTPS (RouterOS 7, port 443)",
+            "de": "REST über HTTPS (RouterOS 7, Port 443)",
+            "es": "REST por HTTPS (RouterOS 7, puerto 443)"
+          }
+        },
+        {
+          "value": "api_ssl",
+          "label": {
+            "en": "API-SSL (port 8729)",
+            "fr": "API-SSL (port 8729)",
+            "de": "API-SSL (Port 8729)",
+            "es": "API-SSL (puerto 8729)"
+          }
+        },
+        {
+          "value": "rest_http",
+          "label": {
+            "en": "REST over HTTP (RouterOS 7, port 80)",
+            "fr": "REST en HTTP (RouterOS 7, port 80)",
+            "de": "REST über HTTP (RouterOS 7, Port 80)",
+            "es": "REST por HTTP (RouterOS 7, puerto 80)"
+          }
+        },
+        {
+          "value": "api",
+          "label": {
+            "en": "API (port 8728)",
+            "fr": "API (port 8728)",
+            "de": "API (Port 8728)",
+            "es": "API (puerto 8728)"
+          }
+        }
       ]
     },
     {
-      "key": "poll_frequency",
-      "type": "number",
-      "label": { "en": "Refresh interval (s)", "fr": "Intervalle de rafraîchissement (s)" },
+      "key": "allow_self_signed",
+      "type": "boolean",
+      "label": {
+        "en": "Accept a self-signed certificate",
+        "fr": "Accepter un certificat auto-signé",
+        "de": "Selbstsigniertes Zertifikat akzeptieren",
+        "es": "Aceptar un certificado autofirmado"
+      },
       "description": {
-        "en": "How often sensors are polled, in seconds (one minute minimum).",
-        "fr": "Fréquence d'interrogation des capteurs, en secondes (une minute minimum)."
+        "en": "For HTTPS and API-SSL: RouterOS uses a self-signed certificate unless you installed another one. Tick only for your own router.",
+        "fr": "Pour HTTPS et API-SSL : RouterOS utilise un certificat auto-signé si vous n'en avez pas installé d'autre. À cocher pour votre propre routeur seulement.",
+        "de": "Für HTTPS und API-SSL: RouterOS nutzt ein selbstsigniertes Zertifikat, wenn du kein anderes installiert hast. Nur für deinen eigenen Router aktivieren.",
+        "es": "Para HTTPS y API-SSL: RouterOS usa un certificado autofirmado si no ha instalado otro. Márquelo solo para su propio router."
       },
       "required": false,
-      "default": 300,
-      "min": 60,
-      "max": 3600
+      "default": false
+    },
+    {
+      "key": "poll_interval",
+      "type": "select",
+      "label": {
+        "en": "Refresh interval",
+        "fr": "Intervalle de rafraîchissement",
+        "de": "Aktualisierungsintervall",
+        "es": "Intervalo de actualización"
+      },
+      "description": {
+        "en": "How often the router is read. The rates are averages over this interval.",
+        "fr": "Fréquence de lecture du routeur. Les débits sont des moyennes sur cet intervalle.",
+        "de": "Wie oft der Router gelesen wird. Die Raten sind Mittelwerte über dieses Intervall.",
+        "es": "Con qué frecuencia se lee el router. Los caudales son medias en este intervalo."
+      },
+      "required": false,
+      "default": "30",
+      "options": [
+        {
+          "value": "10",
+          "label": {
+            "en": "10 seconds",
+            "fr": "10 secondes",
+            "de": "10 Sekunden",
+            "es": "10 segundos"
+          }
+        },
+        {
+          "value": "15",
+          "label": {
+            "en": "15 seconds",
+            "fr": "15 secondes",
+            "de": "15 Sekunden",
+            "es": "15 segundos"
+          }
+        },
+        {
+          "value": "30",
+          "label": {
+            "en": "30 seconds",
+            "fr": "30 secondes",
+            "de": "30 Sekunden",
+            "es": "30 segundos"
+          }
+        },
+        {
+          "value": "60",
+          "label": {
+            "en": "1 minute",
+            "fr": "1 minute",
+            "de": "1 Minute",
+            "es": "1 minuto"
+          }
+        }
+      ]
+    },
+    {
+      "key": "wan_interfaces",
+      "type": "string",
+      "label": {
+        "en": "WAN interfaces",
+        "fr": "Interfaces WAN",
+        "de": "WAN-Schnittstellen",
+        "es": "Interfaces WAN"
+      },
+      "description": {
+        "en": "Names separated by commas, up to four. Empty: the members of the WAN interface list of RouterOS, else ether1.",
+        "fr": "Noms séparés par des virgules, quatre au plus. Vide : les membres de la liste d'interfaces WAN de RouterOS, sinon ether1.",
+        "de": "Namen durch Kommas getrennt, höchstens vier. Leer: die Mitglieder der Schnittstellenliste WAN von RouterOS, sonst ether1.",
+        "es": "Nombres separados por comas, cuatro como máximo. Vacío: los miembros de la lista de interfaces WAN de RouterOS, si no ether1."
+      },
+      "placeholder": {
+        "en": "e.g. ether1, pppoe-out1",
+        "fr": "ex. ether1, pppoe-out1",
+        "de": "z. B. ether1, pppoe-out1",
+        "es": "p. ej. ether1, pppoe-out1"
+      },
+      "required": false,
+      "default": ""
+    },
+    {
+      "key": "presence_section",
+      "type": "section",
+      "label": {
+        "en": "Presence",
+        "fr": "Présence",
+        "de": "Anwesenheit",
+        "es": "Presencia"
+      },
+      "description": {
+        "en": "Add the devices to follow from the Discovery tab: each one becomes a presence sensor, present when the router sees it.",
+        "fr": "Ajoutez les appareils à suivre depuis l'onglet Découverte : chacun devient un capteur de présence, présent quand le routeur le voit.",
+        "de": "Füge die zu verfolgenden Geräte im Tab „Entdecken“ hinzu: Jedes wird ein Anwesenheitssensor, anwesend, wenn der Router es sieht.",
+        "es": "Añada los dispositivos que quiera seguir desde la pestaña Descubrir: cada uno se convierte en un sensor de presencia, presente cuando el router lo ve."
+      }
+    },
+    {
+      "key": "away_delay",
+      "type": "number",
+      "label": {
+        "en": "Departure delay (minutes)",
+        "fr": "Délai de départ (minutes)",
+        "de": "Abwesenheitsverzögerung (Minuten)",
+        "es": "Retraso de salida (minutos)"
+      },
+      "description": {
+        "en": "A device no longer seen counts as away only after this delay: a phone asleep leaves the Wi-Fi for a few minutes.",
+        "fr": "Un appareil qui n'est plus vu ne compte comme absent qu'après ce délai : un téléphone en veille quitte le Wi-Fi quelques minutes.",
+        "de": "Ein nicht mehr gesehenes Gerät gilt erst nach dieser Zeit als abwesend: Ein Handy im Ruhezustand verlässt das WLAN für einige Minuten.",
+        "es": "Un dispositivo que ya no se ve cuenta como ausente solo tras este retraso: un teléfono en reposo deja el Wi-Fi unos minutos."
+      },
+      "required": false,
+      "default": 5,
+      "min": 0,
+      "max": 60
+    },
+    {
+      "key": "presence_arp",
+      "type": "boolean",
+      "label": {
+        "en": "Also use the ARP table",
+        "fr": "Utiliser aussi la table ARP",
+        "de": "Auch die ARP-Tabelle nutzen",
+        "es": "Usar también la tabla ARP"
+      },
+      "description": {
+        "en": "Sees the wired devices and the Wi-Fi of other access points. The Wi-Fi registration tables of the router are always used.",
+        "fr": "Voit les appareils filaires et le Wi-Fi d'autres points d'accès. Les tables d'enregistrement Wi-Fi du routeur servent toujours.",
+        "de": "Sieht die kabelgebundenen Geräte und das WLAN anderer Access Points. Die WLAN-Registrierungstabellen des Routers werden immer genutzt.",
+        "es": "Ve los dispositivos con cable y el Wi-Fi de otros puntos de acceso. Las tablas de registro Wi-Fi del router se usan siempre."
+      },
+      "required": false,
+      "default": true
+    },
+    {
+      "key": "presence_dhcp",
+      "type": "boolean",
+      "label": {
+        "en": "Count a DHCP lease as present",
+        "fr": "Compter un bail DHCP comme présent",
+        "de": "DHCP-Lease als anwesend zählen",
+        "es": "Contar una concesión DHCP como presente"
+      },
+      "description": {
+        "en": "A lease stays bound until it expires, long after the device left: tick it only for devices nothing else sees.",
+        "fr": "Un bail reste actif jusqu'à son expiration, longtemps après le départ : à cocher seulement pour des appareils que rien d'autre ne voit.",
+        "de": "Ein Lease bleibt bis zum Ablauf aktiv, lange nach dem Gehen: Nur für Geräte aktivieren, die sonst nichts sieht.",
+        "es": "Una concesión sigue activa hasta que caduca, mucho después de la salida: márquelo solo para dispositivos que nada más ve."
+      },
+      "required": false,
+      "default": false
+    },
+    {
+      "key": "commands_section",
+      "type": "section",
+      "label": {
+        "en": "Firewall rules and commands",
+        "fr": "Règles de pare-feu et commandes",
+        "de": "Firewall-Regeln und Befehle",
+        "es": "Reglas de cortafuegos y órdenes"
+      },
+      "description": {
+        "en": "Read only by default. Commands enable or disable the rules listed below, or reboot the router, from a scene or a widget. Nothing else is ever changed.",
+        "fr": "Lecture seule par défaut. Les commandes activent ou désactivent les règles listées ci-dessous, ou redémarrent le routeur, depuis une scène ou un widget. Rien d'autre n'est jamais modifié.",
+        "de": "Standardmäßig nur lesend. Befehle aktivieren oder deaktivieren die unten aufgeführten Regeln oder starten den Router neu, aus einer Szene oder einem Widget. Sonst wird nie etwas geändert.",
+        "es": "Solo lectura por defecto. Las órdenes activan o desactivan las reglas indicadas abajo, o reinician el router, desde una escena o un widget. Nunca se cambia nada más."
+      }
+    },
+    {
+      "key": "firewall_rules",
+      "type": "string",
+      "label": {
+        "en": "Firewall rules to follow",
+        "fr": "Règles de pare-feu à suivre",
+        "de": "Zu verfolgende Firewall-Regeln",
+        "es": "Reglas de cortafuegos que seguir"
+      },
+      "description": {
+        "en": "The comments of the filter rules, separated by commas (up to ten). \"List the firewall rules\" shows them.",
+        "fr": "Les commentaires des règles de filtrage, séparés par des virgules (dix au plus). « Lister les règles de pare-feu » les affiche.",
+        "de": "Die Kommentare der Filterregeln, durch Kommas getrennt (höchstens zehn). „Firewall-Regeln auflisten“ zeigt sie an.",
+        "es": "Los comentarios de las reglas de filtrado, separados por comas (diez como máximo). «Listar las reglas de cortafuegos» los muestra."
+      },
+      "placeholder": {
+        "en": "e.g. Block kids tablet",
+        "fr": "ex. Bloquer tablette enfants",
+        "de": "z. B. Kinder-Tablet sperren",
+        "es": "p. ej. Bloquear tableta niños"
+      },
+      "required": false,
+      "default": ""
+    },
+    {
+      "key": "allow_commands",
+      "type": "boolean",
+      "label": {
+        "en": "Allow commands",
+        "fr": "Autoriser les commandes",
+        "de": "Befehle erlauben",
+        "es": "Permitir órdenes"
+      },
+      "description": {
+        "en": "Lets scenes and widgets enable or disable the rules above and reboot the router. The user needs the write and reboot policies.",
+        "fr": "Permet aux scènes et aux widgets d'activer ou de désactiver les règles ci-dessus et de redémarrer le routeur. L'utilisateur doit avoir les droits write et reboot.",
+        "de": "Erlaubt Szenen und Widgets, die Regeln oben zu aktivieren oder zu deaktivieren und den Router neu zu starten. Der Benutzer braucht die Rechte write und reboot.",
+        "es": "Permite a las escenas y widgets activar o desactivar las reglas de arriba y reiniciar el router. El usuario necesita los permisos write y reboot."
+      },
+      "required": false,
+      "default": false
+    },
+    {
+      "key": "language",
+      "type": "select",
+      "label": {
+        "en": "Language of the names",
+        "fr": "Langue des noms",
+        "de": "Sprache der Namen",
+        "es": "Idioma de los nombres"
+      },
+      "description": {
+        "en": "Language of the device and feature names, set when a device is added.",
+        "fr": "Langue des noms d'appareils et de fonctionnalités, fixés à l'ajout d'un appareil.",
+        "de": "Sprache der Geräte- und Funktionsnamen, beim Hinzufügen eines Geräts festgelegt.",
+        "es": "Idioma de los nombres de dispositivos y funciones, fijados al añadir un dispositivo."
+      },
+      "required": false,
+      "default": "fr",
+      "options": [
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "Anglais",
+            "de": "Englisch",
+            "es": "Inglés"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "French",
+            "fr": "Français",
+            "de": "Französisch",
+            "es": "Francés"
+          }
+        },
+        {
+          "value": "de",
+          "label": {
+            "en": "German",
+            "fr": "Allemand",
+            "de": "Deutsch",
+            "es": "Alemán"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Spanish",
+            "fr": "Espagnol",
+            "de": "Spanisch",
+            "es": "Español"
+          }
+        }
+      ]
     }
   ],
   "actions": [
     {
-      "key": "test_weather",
-      "label": { "en": "Test the weather provider", "fr": "Tester le fournisseur météo" },
-      "timeout_seconds": 30
+      "key": "test_connection",
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion",
+        "de": "Verbindung testen",
+        "es": "Probar la conexión"
+      },
+      "description": {
+        "en": "Detects the protocol again, reads the router and reports what it finds.",
+        "fr": "Détecte à nouveau le protocole, lit le routeur et indique ce qu'il trouve.",
+        "de": "Erkennt das Protokoll erneut, liest den Router und meldet, was es findet.",
+        "es": "Detecta de nuevo el protocolo, lee el router e indica lo que encuentra."
+      },
+      "timeout_seconds": 45
     },
     {
-      "key": "identify",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "fields": [
-        {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
-        }
-      ]
+      "key": "list_firewall_rules",
+      "label": {
+        "en": "List the firewall rules",
+        "fr": "Lister les règles de pare-feu",
+        "de": "Firewall-Regeln auflisten",
+        "es": "Listar las reglas de cortafuegos"
+      },
+      "description": {
+        "en": "Shows the filter rules that have a comment, to copy into \"Firewall rules to follow\".",
+        "fr": "Affiche les règles de filtrage qui ont un commentaire, à copier dans « Règles de pare-feu à suivre ».",
+        "de": "Zeigt die Filterregeln mit Kommentar, zum Kopieren in „Zu verfolgende Firewall-Regeln“.",
+        "es": "Muestra las reglas de filtrado con comentario, para copiar en «Reglas de cortafuegos que seguir»."
+      },
+      "timeout_seconds": 30
     }
   ],
   "scene_triggers": [
     {
-      "key": "motion_detected",
-      "label": { "en": "Motion detected", "fr": "Mouvement détecté" },
+      "key": "unknown_device_connected",
+      "label": {
+        "en": "Unknown device connected",
+        "fr": "Appareil inconnu connecté",
+        "de": "Unbekanntes Gerät verbunden",
+        "es": "Dispositivo desconocido conectado"
+      },
       "description": {
-        "en": "A demo motion sensor saw a person or an animal move.",
-        "fr": "Un détecteur de démonstration a vu bouger une personne ou un animal."
+        "en": "A MAC address never seen before joined the Wi-Fi or got a DHCP lease from the router.",
+        "fr": "Une adresse MAC jamais vue s'est connectée au Wi-Fi ou a obtenu un bail DHCP du routeur.",
+        "de": "Eine noch nie gesehene MAC-Adresse hat sich mit dem WLAN verbunden oder ein DHCP-Lease vom Router erhalten.",
+        "es": "Una dirección MAC nunca vista se ha conectado al Wi-Fi o ha obtenido una concesión DHCP del router."
       },
       "fields": [
         {
-          "key": "device",
+          "key": "source",
           "type": "select",
-          "source": "devices",
-          "label": { "en": "Sensor", "fr": "Détecteur" }
-        },
-        {
-          "key": "target",
-          "type": "multi_select",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" },
+          "label": {
+            "en": "Seen by (empty: any)",
+            "fr": "Vu par (vide : tous)",
+            "de": "Gesehen über (leer: beliebig)",
+            "es": "Visto por (vacío: cualquiera)"
+          },
           "options": [
-            { "value": "person", "label": { "en": "Person", "fr": "Personne" } },
-            { "value": "animal", "label": { "en": "Animal", "fr": "Animal" } }
+            {
+              "value": "wifi",
+              "label": {
+                "en": "Wi-Fi",
+                "fr": "Wi-Fi",
+                "de": "WLAN",
+                "es": "Wi-Fi"
+              }
+            },
+            {
+              "value": "dhcp",
+              "label": {
+                "en": "DHCP lease",
+                "fr": "Bail DHCP",
+                "de": "DHCP-Lease",
+                "es": "Concesión DHCP"
+              }
+            }
           ]
         }
       ],
       "variables": [
         {
-          "key": "target",
+          "key": "mac",
           "type": "string",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" }
+          "label": {
+            "en": "MAC address",
+            "fr": "Adresse MAC",
+            "de": "MAC-Adresse",
+            "es": "Dirección MAC"
+          }
+        },
+        {
+          "key": "ip",
+          "type": "string",
+          "label": {
+            "en": "IP address",
+            "fr": "Adresse IP",
+            "de": "IP-Adresse",
+            "es": "Dirección IP"
+          }
+        },
+        {
+          "key": "host_name",
+          "type": "string",
+          "label": {
+            "en": "Host name",
+            "fr": "Nom d'hôte",
+            "de": "Hostname",
+            "es": "Nombre de host"
+          }
+        },
+        {
+          "key": "source",
+          "type": "string",
+          "label": {
+            "en": "Seen by",
+            "fr": "Vu par",
+            "de": "Gesehen über",
+            "es": "Visto por"
+          }
+        },
+        {
+          "key": "interface",
+          "type": "string",
+          "label": {
+            "en": "Interface",
+            "fr": "Interface",
+            "de": "Schnittstelle",
+            "es": "Interfaz"
+          }
+        }
+      ]
+    },
+    {
+      "key": "wan_down",
+      "label": {
+        "en": "WAN link down",
+        "fr": "Lien WAN coupé",
+        "de": "WAN-Verbindung getrennt",
+        "es": "Enlace WAN cortado"
+      },
+      "description": {
+        "en": "A WAN interface of the router lost its link (cable, fibre, PPPoE session).",
+        "fr": "Une interface WAN du routeur a perdu son lien (câble, fibre, session PPPoE).",
+        "de": "Eine WAN-Schnittstelle des Routers hat ihre Verbindung verloren (Kabel, Glasfaser, PPPoE-Sitzung).",
+        "es": "Una interfaz WAN del router ha perdido su enlace (cable, fibra, sesión PPPoE)."
+      },
+      "fields": [
+        {
+          "key": "interface",
+          "type": "string",
+          "label": {
+            "en": "Interface (empty: any)",
+            "fr": "Interface (vide : toutes)",
+            "de": "Schnittstelle (leer: beliebig)",
+            "es": "Interfaz (vacío: cualquiera)"
+          },
+          "placeholder": {
+            "en": "e.g. ether1",
+            "fr": "ex. ether1",
+            "de": "z. B. ether1",
+            "es": "p. ej. ether1"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "interface",
+          "type": "string",
+          "label": {
+            "en": "Interface",
+            "fr": "Interface",
+            "de": "Schnittstelle",
+            "es": "Interfaz"
+          }
+        }
+      ]
+    },
+    {
+      "key": "wan_up",
+      "label": {
+        "en": "WAN link restored",
+        "fr": "Lien WAN rétabli",
+        "de": "WAN-Verbindung wiederhergestellt",
+        "es": "Enlace WAN restablecido"
+      },
+      "description": {
+        "en": "A WAN interface that was down has its link again, with the length of the outage.",
+        "fr": "Une interface WAN coupée a retrouvé son lien, avec la durée de la coupure.",
+        "de": "Eine getrennte WAN-Schnittstelle hat wieder Verbindung, mit der Dauer des Ausfalls.",
+        "es": "Una interfaz WAN cortada ha recuperado su enlace, con la duración del corte."
+      },
+      "fields": [
+        {
+          "key": "interface",
+          "type": "string",
+          "label": {
+            "en": "Interface (empty: any)",
+            "fr": "Interface (vide : toutes)",
+            "de": "Schnittstelle (leer: beliebig)",
+            "es": "Interfaz (vacío: cualquiera)"
+          },
+          "placeholder": {
+            "en": "e.g. ether1",
+            "fr": "ex. ether1",
+            "de": "z. B. ether1",
+            "es": "p. ej. ether1"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "interface",
+          "type": "string",
+          "label": {
+            "en": "Interface",
+            "fr": "Interface",
+            "de": "Schnittstelle",
+            "es": "Interfaz"
+          }
+        },
+        {
+          "key": "down_minutes",
+          "type": "number",
+          "label": {
+            "en": "Outage (minutes)",
+            "fr": "Coupure (minutes)",
+            "de": "Ausfall (Minuten)",
+            "es": "Corte (minutos)"
+          }
         }
       ]
     }
   ],
   "scene_actions": [
     {
-      "key": "identify_device",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "description": {
-        "en": "Make a device signal itself (the demo light blinks).",
-        "fr": "Fait se signaler un appareil (la lampe de démonstration clignote)."
+      "key": "enable_firewall_rule",
+      "label": {
+        "en": "Enable a firewall rule",
+        "fr": "Activer une règle de pare-feu",
+        "de": "Firewall-Regel aktivieren",
+        "es": "Activar una regla de cortafuegos"
       },
-      "timeout_seconds": 15,
+      "description": {
+        "en": "Enables the RouterOS rules with this comment (IPv4 and IPv6). Needs \"Allow commands\".",
+        "fr": "Active les règles RouterOS de ce commentaire (IPv4 et IPv6). Nécessite « Autoriser les commandes ».",
+        "de": "Aktiviert die RouterOS-Regeln mit diesem Kommentar (IPv4 und IPv6). Erfordert „Befehle erlauben“.",
+        "es": "Activa las reglas de RouterOS con este comentario (IPv4 e IPv6). Requiere «Permitir órdenes»."
+      },
+      "timeout_seconds": 20,
       "fields": [
         {
-          "key": "device",
+          "key": "rule",
           "type": "select",
           "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
+          "label": {
+            "en": "Firewall rule",
+            "fr": "Règle de pare-feu",
+            "de": "Firewall-Regel",
+            "es": "Regla de cortafuegos"
+          },
+          "description": {
+            "en": "A rule followed in the configuration (a \"Rule …\" device).",
+            "fr": "Une règle suivie dans la configuration (un appareil « Règle … »).",
+            "de": "Eine in der Konfiguration verfolgte Regel (ein Gerät „Regel …“).",
+            "es": "Una regla seguida en la configuración (un dispositivo «Regla …»)."
+          },
           "required": true
         }
       ],
       "outputs": [
         {
-          "key": "signalled",
+          "key": "active",
           "type": "boolean",
-          "label": { "en": "Device signalled", "fr": "Appareil signalé" }
+          "label": {
+            "en": "Rule enabled",
+            "fr": "Règle activée",
+            "de": "Regel aktiviert",
+            "es": "Regla activada"
+          }
         }
       ]
+    },
+    {
+      "key": "disable_firewall_rule",
+      "label": {
+        "en": "Disable a firewall rule",
+        "fr": "Désactiver une règle de pare-feu",
+        "de": "Firewall-Regel deaktivieren",
+        "es": "Desactivar una regla de cortafuegos"
+      },
+      "description": {
+        "en": "Disables the RouterOS rules with this comment (IPv4 and IPv6). Needs \"Allow commands\".",
+        "fr": "Désactive les règles RouterOS de ce commentaire (IPv4 et IPv6). Nécessite « Autoriser les commandes ».",
+        "de": "Deaktiviert die RouterOS-Regeln mit diesem Kommentar (IPv4 und IPv6). Erfordert „Befehle erlauben“.",
+        "es": "Desactiva las reglas de RouterOS con este comentario (IPv4 e IPv6). Requiere «Permitir órdenes»."
+      },
+      "timeout_seconds": 20,
+      "fields": [
+        {
+          "key": "rule",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Firewall rule",
+            "fr": "Règle de pare-feu",
+            "de": "Firewall-Regel",
+            "es": "Regla de cortafuegos"
+          },
+          "description": {
+            "en": "A rule followed in the configuration (a \"Rule …\" device).",
+            "fr": "Une règle suivie dans la configuration (un appareil « Règle … »).",
+            "de": "Eine in der Konfiguration verfolgte Regel (ein Gerät „Regel …“).",
+            "es": "Una regla seguida en la configuración (un dispositivo «Regla …»)."
+          },
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "key": "active",
+          "type": "boolean",
+          "label": {
+            "en": "Rule enabled",
+            "fr": "Règle activée",
+            "de": "Regel aktiviert",
+            "es": "Regla activada"
+          }
+        }
+      ]
+    },
+    {
+      "key": "reboot_router",
+      "label": {
+        "en": "Reboot the MikroTik router",
+        "fr": "Redémarrer le routeur MikroTik",
+        "de": "MikroTik-Router neu starten",
+        "es": "Reiniciar el router MikroTik"
+      },
+      "description": {
+        "en": "Restarts the router: the network is cut for a minute or two. Needs \"Allow commands\".",
+        "fr": "Redémarre le routeur : le réseau est coupé une à deux minutes. Nécessite « Autoriser les commandes ».",
+        "de": "Startet den Router neu: Das Netzwerk ist ein bis zwei Minuten unterbrochen. Erfordert „Befehle erlauben“.",
+        "es": "Reinicia el router: la red se corta uno o dos minutos. Requiere «Permitir órdenes»."
+      },
+      "timeout_seconds": 20
     }
   ],
   "widgets": [
     {
-      "key": "demo_status",
-      "label": { "en": "Demo status", "fr": "État de la démo" },
+      "key": "router",
+      "label": {
+        "en": "MikroTik router",
+        "fr": "Routeur MikroTik",
+        "de": "MikroTik-Router",
+        "es": "Router MikroTik"
+      },
       "description": {
-        "en": "Live temperature and plug power, plug connection and observed location.",
-        "fr": "Température et puissance en direct, connexion de la prise, position observée."
+        "en": "CPU, memory, temperature, WAN rates and links, RouterOS version and updates.",
+        "fr": "Processeur, mémoire, température, débits et liens WAN, version et mises à jour.",
+        "de": "CPU, Speicher, Temperatur, WAN-Raten und -Verbindungen, Version und Updates.",
+        "es": "Procesador, memoria, temperatura, caudal y enlaces WAN, versión y actualizaciones."
       },
       "icon": "activity",
-      "action_timeout_seconds": 15
+      "action_timeout_seconds": 20
+    },
+    {
+      "key": "presence",
+      "label": {
+        "en": "Devices at home",
+        "fr": "Appareils présents",
+        "de": "Anwesende Geräte",
+        "es": "Dispositivos presentes"
+      },
+      "description": {
+        "en": "The devices followed as presence sensors, present first.",
+        "fr": "Les appareils suivis comme capteurs de présence, présents d'abord.",
+        "de": "Die als Anwesenheitssensoren verfolgten Geräte, anwesende zuerst.",
+        "es": "Los dispositivos seguidos como sensores de presencia, presentes primero."
+      },
+      "icon": "users",
+      "settings": [
+        {
+          "key": "show",
+          "type": "select",
+          "label": {
+            "en": "Show",
+            "fr": "Afficher",
+            "de": "Anzeigen",
+            "es": "Mostrar"
+          },
+          "required": false,
+          "default": "all",
+          "options": [
+            {
+              "value": "all",
+              "label": {
+                "en": "Every followed device",
+                "fr": "Tous les appareils suivis",
+                "de": "Alle verfolgten Geräte",
+                "es": "Todos los dispositivos seguidos"
+              }
+            },
+            {
+              "value": "present",
+              "label": {
+                "en": "Present devices only",
+                "fr": "Les présents seulement",
+                "de": "Nur anwesende Geräte",
+                "es": "Solo los presentes"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "firewall_rules",
+      "label": {
+        "en": "Firewall rules",
+        "fr": "Règles de pare-feu",
+        "de": "Firewall-Regeln",
+        "es": "Reglas de cortafuegos"
+      },
+      "description": {
+        "en": "The followed rules, and a button to enable or disable each one (parental control).",
+        "fr": "Les règles suivies, et un bouton pour activer ou désactiver chacune (contrôle parental).",
+        "de": "Die verfolgten Regeln und eine Taste, um jede zu aktivieren oder deaktivieren (Kindersicherung).",
+        "es": "Las reglas seguidas y un botón para activar o desactivar cada una (control parental)."
+      },
+      "icon": "shield",
+      "action_timeout_seconds": 20
     }
   ]
 }
