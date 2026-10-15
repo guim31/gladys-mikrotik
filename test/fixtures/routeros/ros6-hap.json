@@ -1,0 +1,194 @@
+{
+  "/system/identity": [{ "name": "hAP-salon" }],
+  "/system/resource": [
+    {
+      "architecture-name": "mipsbe",
+      "bad-blocks": "0",
+      "board-name": "hAP ac^2",
+      "cpu": "MIPS 24Kc V7.4",
+      "cpu-count": "1",
+      "cpu-frequency": "650",
+      "cpu-load": "7",
+      "free-hdd-space": "3809280",
+      "free-memory": "38551552",
+      "platform": "MikroTik",
+      "total-hdd-space": "16777216",
+      "total-memory": "67108864",
+      "uptime": "3d01:02:03",
+      "version": "6.49.17 (long-term)"
+    }
+  ],
+  "/system/routerboard": [
+    {
+      "current-firmware": "6.49.17",
+      "model": "RBD52G-5HacD2HnD",
+      "routerboard": "true",
+      "serial-number": "D52G0ABCDEF1",
+      "upgrade-firmware": "6.49.17"
+    }
+  ],
+  "/system/license": [{ "nlevel": "4", "software-id": "EF56-GH78" }],
+  "/system/health": [{ "temperature": "41", "voltage": "24.1" }],
+  "/system/package/update": [
+    {
+      "channel": "long-term",
+      "installed-version": "6.49.17",
+      "latest-version": "6.49.17",
+      "status": "System is already up to date"
+    }
+  ],
+  "/interface": [
+    {
+      ".id": "*1",
+      "default-name": "ether1",
+      "disabled": "false",
+      "mac-address": "00:00:5E:00:53:B1",
+      "name": "ether1-gateway",
+      "running": "true",
+      "rx-byte": "123456789",
+      "tx-byte": "23456789",
+      "type": "ether"
+    },
+    {
+      ".id": "*2",
+      "default-name": "ether2",
+      "disabled": "false",
+      "mac-address": "00:00:5E:00:53:B2",
+      "name": "ether2",
+      "running": "true",
+      "rx-byte": "3456789",
+      "tx-byte": "4567890",
+      "type": "ether"
+    },
+    {
+      ".id": "*7",
+      "default-name": "wlan1",
+      "disabled": "false",
+      "mac-address": "00:00:5E:00:53:B3",
+      "name": "wlan1",
+      "running": "true",
+      "rx-byte": "4567890",
+      "tx-byte": "5678901",
+      "type": "wlan"
+    },
+    {
+      ".id": "*C",
+      "disabled": "false",
+      "name": "pppoe-out1",
+      "running": "true",
+      "rx-byte": "98765432",
+      "tx-byte": "8765432",
+      "type": "pppoe-out"
+    }
+  ],
+  "/interface/list/member": [
+    {
+      ".id": "*1",
+      "disabled": "false",
+      "dynamic": "false",
+      "interface": "ether1-gateway",
+      "list": "WAN"
+    },
+    {
+      ".id": "*2",
+      "disabled": "false",
+      "dynamic": "false",
+      "interface": "pppoe-out1",
+      "list": "WAN"
+    }
+  ],
+  "/interface/wireless/registration-table": [
+    {
+      ".id": "*264",
+      "802.1x-port-enabled": "true",
+      "ap": "false",
+      "authentication-type": "wpa2-psk",
+      "bridge": "false",
+      "bytes": "17536671,2966351",
+      "encryption": "aes-ccm",
+      "interface": "wlan1",
+      "last-activity": "170ms",
+      "last-ip": "192.0.2.21",
+      "mac-address": "00:00:5E:00:53:21",
+      "p-throughput": "54928",
+      "rx-rate": "72.2Mbps-20MHz/1S/SGI",
+      "signal-strength": "-62@1Mbps",
+      "signal-to-noise": "52",
+      "tx-ccq": "93",
+      "tx-rate": "72.2Mbps-20MHz/1S/SGI",
+      "uptime": "5h49m36s",
+      "wds": "false"
+    }
+  ],
+  "/ip/arp": [
+    {
+      ".id": "*1",
+      "DHCP": "true",
+      "address": "192.0.2.21",
+      "complete": "true",
+      "disabled": "false",
+      "dynamic": "true",
+      "interface": "bridge",
+      "invalid": "false",
+      "mac-address": "00:00:5E:00:53:21",
+      "published": "false"
+    },
+    {
+      ".id": "*2",
+      "DHCP": "true",
+      "address": "192.0.2.22",
+      "complete": "true",
+      "disabled": "false",
+      "dynamic": "true",
+      "interface": "bridge",
+      "invalid": "false",
+      "mac-address": "00:00:5E:00:53:22",
+      "published": "false"
+    }
+  ],
+  "/ip/dhcp-server/lease": [
+    {
+      ".id": "*1",
+      "active-address": "192.0.2.21",
+      "active-mac-address": "00:00:5E:00:53:21",
+      "address": "192.0.2.21",
+      "dynamic": "true",
+      "host-name": "phone-alex",
+      "last-seen": "2m10s",
+      "mac-address": "00:00:5E:00:53:21",
+      "server": "dhcp1",
+      "status": "bound"
+    },
+    {
+      ".id": "*2",
+      "active-address": "192.0.2.22",
+      "active-mac-address": "00:00:5E:00:53:22",
+      "address": "192.0.2.22",
+      "comment": "NAS",
+      "dynamic": "false",
+      "host-name": "nas",
+      "last-seen": "40s",
+      "mac-address": "00:00:5E:00:53:22",
+      "server": "dhcp1",
+      "status": "bound"
+    }
+  ],
+  "/ip/firewall/filter": [
+    {
+      ".id": "*1",
+      "action": "accept",
+      "chain": "input",
+      "comment": "defconf: accept established,related",
+      "disabled": "false",
+      "dynamic": "false"
+    },
+    {
+      ".id": "*8",
+      "action": "drop",
+      "chain": "forward",
+      "comment": "Block kids tablet",
+      "disabled": "false",
+      "dynamic": "false"
+    }
+  ]
+}

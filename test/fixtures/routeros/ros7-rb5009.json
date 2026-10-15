@@ -1,0 +1,308 @@
+{
+  "/system/identity": [{ "name": "MikroTik" }],
+  "/system/resource": [
+    {
+      "architecture-name": "arm64",
+      "board-name": "RB5009UG+S+",
+      "build-time": "2025-03-13 11:22:33",
+      "cpu": "ARM64",
+      "cpu-count": "4",
+      "cpu-frequency": "1400",
+      "cpu-load": "15",
+      "free-hdd-space": "866271232",
+      "free-memory": "804896768",
+      "platform": "MikroTik",
+      "total-hdd-space": "1073741824",
+      "total-memory": "1073741824",
+      "uptime": "1w2d3h4m5s",
+      "version": "7.18.2 (stable)",
+      "write-sect-since-reboot": "6640",
+      "write-sect-total": "1270521"
+    }
+  ],
+  "/system/routerboard": [
+    {
+      "current-firmware": "7.18.2",
+      "firmware-type": "70x0",
+      "factory-firmware": "7.0.4",
+      "model": "RB5009UG+S+",
+      "routerboard": "true",
+      "serial-number": "HG10ABC1DEF",
+      "upgrade-firmware": "7.18.2"
+    }
+  ],
+  "/system/license": [{ "features": "", "nlevel": "6", "software-id": "AB12-CD34" }],
+  "/system/health": [
+    { ".id": "*D", "name": "voltage", "type": "V", "value": "24.2" },
+    { ".id": "*E", "name": "temperature", "type": "C", "value": "50" },
+    { ".id": "*F", "name": "cpu-temperature", "type": "C", "value": "47" }
+  ],
+  "/system/package/update": [
+    {
+      "channel": "stable",
+      "installed-version": "7.18.2",
+      "latest-version": "7.19.1",
+      "status": "New version is available"
+    }
+  ],
+  "/interface": [
+    {
+      ".id": "*1",
+      "actual-mtu": "1500",
+      "default-name": "ether1",
+      "disabled": "false",
+      "last-link-up-time": "2025-03-20 09:12:01",
+      "link-downs": "1",
+      "mac-address": "00:00:5E:00:53:A1",
+      "mtu": "1500",
+      "name": "ether1",
+      "running": "true",
+      "rx-byte": "905138492811",
+      "rx-packet": "712290102",
+      "tx-byte": "88217360441",
+      "tx-packet": "301928443",
+      "type": "ether"
+    },
+    {
+      ".id": "*2",
+      "default-name": "ether2",
+      "disabled": "false",
+      "mac-address": "00:00:5E:00:53:A2",
+      "name": "ether2",
+      "running": "true",
+      "rx-byte": "88017360441",
+      "tx-byte": "903138492811",
+      "type": "ether"
+    },
+    {
+      ".id": "*3",
+      "comment": "spare port",
+      "default-name": "ether3",
+      "disabled": "true",
+      "mac-address": "00:00:5E:00:53:A3",
+      "name": "ether3",
+      "running": "false",
+      "rx-byte": "0",
+      "tx-byte": "0",
+      "type": "ether"
+    },
+    {
+      ".id": "*9",
+      "disabled": "false",
+      "mac-address": "00:00:5E:00:53:A2",
+      "name": "bridge",
+      "running": "true",
+      "rx-byte": "86017360441",
+      "tx-byte": "902138492811",
+      "type": "bridge"
+    },
+    {
+      ".id": "*A",
+      "disabled": "false",
+      "mac-address": "00:00:5E:00:53:A4",
+      "name": "wifi1",
+      "running": "true",
+      "rx-byte": "6017360441",
+      "tx-byte": "42138492811",
+      "type": "wifi"
+    },
+    {
+      ".id": "*B",
+      "disabled": "false",
+      "name": "lo",
+      "running": "true",
+      "rx-byte": "13310",
+      "tx-byte": "13310",
+      "type": "loopback"
+    }
+  ],
+  "/interface/list/member": [
+    { ".id": "*1", "disabled": "false", "dynamic": "false", "interface": "bridge", "list": "LAN" },
+    { ".id": "*2", "disabled": "false", "dynamic": "false", "interface": "ether1", "list": "WAN" }
+  ],
+  "/interface/wifi/registration-table": [
+    {
+      ".id": "*F7",
+      "authorized": "true",
+      "bytes": "1851474,2037295",
+      "interface": "wifi1",
+      "mac-address": "00:00:5E:00:53:04",
+      "packets": "17748,18516",
+      "rx-bits-per-second": "0",
+      "rx-rate": "54Mbps",
+      "signal": "-47",
+      "ssid": "home-ssid",
+      "tx-bits-per-second": "0",
+      "tx-rate": "54Mbps",
+      "uptime": "2d15h28m27s"
+    },
+    {
+      ".id": "*F8",
+      "authorized": "true",
+      "interface": "wifi1",
+      "mac-address": "00:00:5E:00:53:01",
+      "signal": "-62",
+      "ssid": "home-ssid",
+      "uptime": "5h49m36s"
+    }
+  ],
+  "/ip/arp": [
+    {
+      ".id": "*1",
+      "DHCP": "true",
+      "address": "192.0.2.11",
+      "complete": "true",
+      "disabled": "false",
+      "dynamic": "true",
+      "interface": "bridge",
+      "invalid": "false",
+      "mac-address": "00:00:5E:00:53:01",
+      "published": "false",
+      "status": "reachable"
+    },
+    {
+      ".id": "*2",
+      "DHCP": "true",
+      "address": "192.0.2.12",
+      "complete": "true",
+      "disabled": "false",
+      "dynamic": "true",
+      "interface": "bridge",
+      "invalid": "false",
+      "mac-address": "00:00:5E:00:53:02",
+      "published": "false",
+      "status": "reachable"
+    },
+    {
+      ".id": "*3",
+      "DHCP": "true",
+      "address": "192.0.2.13",
+      "complete": "true",
+      "disabled": "false",
+      "dynamic": "true",
+      "interface": "bridge",
+      "invalid": "false",
+      "mac-address": "00:00:5E:00:53:03",
+      "published": "false",
+      "status": "stale"
+    },
+    {
+      ".id": "*4",
+      "address": "198.51.100.1",
+      "complete": "true",
+      "disabled": "false",
+      "dynamic": "true",
+      "interface": "ether1",
+      "invalid": "false",
+      "mac-address": "00:00:5E:00:53:F0",
+      "published": "false",
+      "status": "reachable"
+    }
+  ],
+  "/ip/dhcp-server/lease": [
+    {
+      ".id": "*1A",
+      "active-address": "192.0.2.11",
+      "active-mac-address": "00:00:5E:00:53:01",
+      "address": "192.0.2.11",
+      "comment": "Mobile",
+      "dynamic": "false",
+      "host-name": "Device_1",
+      "last-seen": "1m20s",
+      "mac-address": "00:00:5E:00:53:01",
+      "server": "defconf",
+      "status": "bound"
+    },
+    {
+      ".id": "*1B",
+      "active-address": "192.0.2.12",
+      "active-mac-address": "00:00:5E:00:53:02",
+      "address": "192.0.2.12",
+      "comment": "PC",
+      "dynamic": "true",
+      "host-name": "Device_2",
+      "last-seen": "12s",
+      "mac-address": "00:00:5E:00:53:02",
+      "server": "defconf",
+      "status": "bound"
+    },
+    {
+      ".id": "*1C",
+      "address": "192.0.2.13",
+      "dynamic": "true",
+      "host-name": "Device_3",
+      "last-seen": "3h4m",
+      "mac-address": "00:00:5E:00:53:03",
+      "server": "defconf",
+      "status": "waiting"
+    },
+    {
+      ".id": "*F7",
+      "active-address": "192.0.2.14",
+      "active-mac-address": "00:00:5E:00:53:04",
+      "address": "192.0.2.14",
+      "comment": "Wifiwave2 device",
+      "dynamic": "true",
+      "host-name": "Device_4",
+      "last-seen": "2s",
+      "mac-address": "00:00:5E:00:53:04",
+      "server": "defconf",
+      "status": "bound"
+    }
+  ],
+  "/ip/firewall/filter": [
+    {
+      ".id": "*1",
+      "action": "accept",
+      "chain": "input",
+      "comment": "defconf: accept established,related,untracked",
+      "connection-state": "established,related,untracked",
+      "disabled": "false",
+      "dynamic": "false"
+    },
+    {
+      ".id": "*2",
+      "action": "passthrough",
+      "chain": "unused-hs-chain",
+      "comment": "special dummy rule to show fasttrack counters",
+      "disabled": "false",
+      "dynamic": "true"
+    },
+    {
+      ".id": "*1A",
+      "action": "drop",
+      "chain": "forward",
+      "comment": "Block kids tablet",
+      "disabled": "true",
+      "dynamic": "false",
+      "src-mac-address": "00:00:5E:00:53:02"
+    },
+    {
+      ".id": "*1B",
+      "action": "reject",
+      "chain": "forward",
+      "comment": "Guests offline",
+      "disabled": "false",
+      "dynamic": "false",
+      "in-interface": "guest"
+    }
+  ],
+  "/ipv6/firewall/filter": [
+    {
+      ".id": "*5",
+      "action": "accept",
+      "chain": "input",
+      "comment": "defconf: accept established,related,untracked",
+      "disabled": "false",
+      "dynamic": "false"
+    },
+    {
+      ".id": "*9",
+      "action": "drop",
+      "chain": "forward",
+      "comment": "Block kids tablet",
+      "disabled": "true",
+      "dynamic": "false"
+    }
+  ]
+}

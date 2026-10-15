@@ -31,16 +31,26 @@ pushing.
 ## Architecture
 
 ```
-index.js                          SDK wiring only: handlers registered before connect()
-src/devices/index.js              registry of the device blueprints + dispatch helpers
-src/devices/<type>.js             one device type per file (buildDevice, onPoll, onSetValue...)
+index.js                          SDK wiring only (src/app.js does the registering)
+src/app.js                        registers every handler on a GladysIntegration or the fake Gladys
+src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
+src/hub.js                        the reading timer, states, scene events, commands, reports
+src/devices.js                    router, client (presence) and rule devices: ids, features, names
+src/presence.js                   clients of a reading, departure delay
+src/routeros/rest.js              RouterOS 7 REST API transport (GET print, POST commands)
+src/routeros/api.js               RouterOS API protocol transport (words, sentences, login)
+src/routeros/client.js            protocol choice (auto: REST HTTPS, API-SSL, REST HTTP, API)
+src/routeros/model.js             readers of the RouterOS answers (strings or typed values)
+src/routeros/errors.js            error kinds (unreachable, tls, auth, permission…)
+src/routeros/http.js              the HTTP(S) request of the REST transport (test seam)
 src/scenes.js                     scene action handlers (manifest `scene_actions`)
 src/widgets.js                    dashboard widget handlers (manifest `widgets`)
-src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
-src/weather.js                    example driver (Open-Meteo)
+src/texts.js                      the four-language messages of the code
+src/store.js                      /data/mikrotik-state.json (MACs already seen)
+scripts/probe.mjs                 read-only probe of a real router (run outside the session)
 gladys-assistant-integration.json manifest: name, config_schema, actions, image...
-docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
-test/                             node --test, against the SDK's fake Gladys (integration-sdk/testing)
+docs/{en,fr,de,es}.md             user documentation, re-hosted by Gladys, same sections
+test/                             node --test, SDK fake Gladys + test/helpers/fakeRouterOs.js
 .github/scripts/release.mjs       release helpers (manifest bump, changelog), tested in test/
 ```
 
@@ -70,8 +80,10 @@ test/                             node --test, against the SDK's fake Gladys (in
   `type: "provider"`: 5.1.0). `test/manifest.test.js` ties the manifest to the
   code (defaults, action, scene and widget handlers): change both sides
   together.
-- **User-facing text** is bilingual (English and French): action messages,
-  manifest texts, and `docs/en.md` / `docs/fr.md`, kept in sync.
+- **User-facing text** is in four languages (English, French, German with
+  "du", Spanish with "usted"): action messages, manifest texts, widget texts,
+  feature names and `docs/{en,fr,de,es}.md`, kept in sync. `test/i18n.test.js`
+  checks it.
 - **Style.** Prettier formats, ESLint catches mistakes. Comments explain why,
   in English. Tests never touch the network.
 
@@ -233,3 +245,43 @@ long, et sur un « Sie »/« Ihr… » de politesse en allemand. Le store exige 
 - Docs `en`, `fr`, `de`, `es` avec les mêmes sections.
 - Chauffe, ouverture, sécurité : ne rien rendre pilotable « comme un thermostat » ou par un assistant
   vocal quand une erreur serait dangereuse (leçon d'OctoPrint).
+
+## Intégration MikroTik (15/10/2026)
+
+Développée **sans routeur** : fixtures tirées des tests Home Assistant (`tests/components/mikrotik/const.py`,
+Apache-2.0) et de la doc help.mikrotik.com, anonymisées (RFC 5737, RFC 7042). Le test réel passe par
+`scripts/probe.mjs` (lecture seule, rapport sans adresse ni MAC ni numéro de série), lancé ailleurs.
+
+- **Deux transports, une interface** (`print(menu, { proplist })`, `run(menu, command, params)`) :
+  REST (`GET /rest/<menu>?.proplist=…`, `POST /rest/<menu>/<commande>`, authentification basique à chaque
+  requête) et protocole API (mots préfixés par leur longueur, `!re`/`!done`/`!trap`/`!fatal`/`!empty`,
+  login 6.43+ et défi MD5 d'avant). Les deux rendent **des chaînes** (`"true"`, `"15"`, `"1w2d3h"`) :
+  tout passe par `src/routeros/model.js`. Un menu à un seul élément (`/system/resource`) est un objet en
+  REST, un `!re` en API.
+- **librouteros est GPL** : lu pour le protocole, jamais copié. tomaae/mikrotik_router et Home Assistant
+  sont Apache-2.0.
+- **Détection** : les quatre protocoles en parallèle, le premier de la liste REST HTTPS, API-SSL, REST
+  HTTP, API qui ouvre une session est gardé. RouterOS 6 répond en HTML sur `/rest` (WebFig) :
+  `not_routeros`. Un certificat refusé n'empêche pas le repli en clair, mais le test de connexion le
+  signale. API-SSL sans certificat (défaut RouterOS) n'offre que des suites ADH : proposées seulement si
+  « certificat auto-signé » est coché (non vérifié sur matériel).
+- **Identité du routeur** : `serial-number` de `/system/routerboard`, sinon `software-id`/`system-id` de
+  `/system/license`, sinon la MAC du premier ether. Jamais l'adresse saisie.
+- **Présence** : `presence-sensor/binary` (le `push` s'affiche « vu il y a… », faux après un 0). Un 1 est
+  republié toutes les 2 min pour l'action « Vérifier la présence » (elle lit `last_value_changed`). Un
+  routeur injoignable ne change aucune présence. L'ARP des interfaces WAN est ignorée (box de
+  l'opérateur).
+- **Déclencheur « appareil inconnu »** : Wi-Fi et baux DHCP **actifs** seulement (pas l'ARP, pas un bail
+  réservé jamais utilisé) ; la première lecture apprend le réseau sans déclencher ; MAC mémorisées dans
+  `/data` (5 000 au plus) ; 5 événements par lecture au plus.
+- **Commandes** : désactivées par défaut ; seulement le drapeau `disabled` des règles de filtrage dont
+  le commentaire est listé (IPv4 et IPv6 ensemble) et `/system/reboot`. Les règles sont des appareils
+  `input/binary` en lecture seule, jamais un interrupteur (piège à assistant vocal). Un reboot qui coupe
+  la connexion avant de répondre compte comme réussi.
+- **Mises à jour** : `/system/package/update` lu toutes les heures ; `check-for-updates` une fois par
+  jour, abandonné au premier refus de permission (compte en lecture seule : le dernier résultat de
+  RouterOS reste affiché).
+- **Débits** : croissance des compteurs `rx-byte`/`tx-byte` entre deux lectures (pas de
+  `monitor-traffic`, qui est une commande) ; un compteur qui recule (reboot) ne donne pas de débit.
+- Le faux RouterOS (`test/helpers/fakeRouterOs.js`) sert les deux fronts sur les mêmes données ; un test
+  par transport passe aussi par un vrai socket sur la boucle locale.

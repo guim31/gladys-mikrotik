@@ -30,6 +30,34 @@ Gladys before reporting a problem.
 
 In scope: the code of this repository and the Docker image it publishes.
 
+What the integration handles:
+
+- **Secrets**: the RouterOS user name and password are fields of the Gladys
+  configuration (the password a `secret` field). The integration reads them
+  from Gladys at startup, keeps them in memory, sends them only to the router
+  typed in the configuration (HTTP basic authentication of the REST API, or
+  the login of the API protocol), and never writes them to `/data` nor to the
+  logs. A read-only RouterOS user is enough unless the commands are allowed.
+- **Stored in `/data`**: `mikrotik-state.json`, the MAC addresses already seen
+  on the network with the date they were first seen (for the "Unknown device
+  connected" trigger, 5,000 at most), and the date of the last update check.
+  Nothing else.
+- **Network**: requests go only to the router address of the configuration,
+  on the local network: REST over HTTPS (443) or HTTP (80), API-SSL (8729) or
+  API (8728). With HTTP and the plain API, the password travels unencrypted on
+  the LAN; the automatic mode prefers the encrypted protocols, and the
+  connection test says so. Certificates are verified unless the user ticks
+  "Accept a self-signed certificate" (then API-SSL also accepts the anonymous
+  suites RouterOS offers without a certificate). The integration opens no
+  port and calls no cloud service; RouterOS itself contacts MikroTik's update
+  servers once a day when the integration asks it to check for updates.
+- **Changes to the router**: none unless "Allow commands" is ticked. Then
+  only the `disabled` flag of the firewall filter rules whose comment the user
+  listed, and a reboot, from a scene action or a widget button with
+  confirmation. Nothing is exposed as a switch.
+
 Out of scope: Gladys Assistant itself (see its
 [security policy](https://github.com/GladysAssistant/Gladys/security/policy)),
-and the third-party services and devices the integration talks to.
+RouterOS itself (see MikroTik's
+[security page](https://mikrotik.com/supportsec)), and the other devices and
+services of your network.
