@@ -1,6 +1,6 @@
 {
   "name": "gladys-mikrotik",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "MikroTik RouterOS integration for Gladys Assistant: presence, router health, WAN rates and outages.",
   "type": "module",
